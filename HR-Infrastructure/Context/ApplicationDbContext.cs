@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Emit;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -40,6 +41,11 @@ namespace HR_Infrastructure.Context
                 .WithMany()
                 .HasForeignKey(s => s.EmployeeId)
                 .OnDelete(DeleteBehavior.Cascade);
+            builder.Entity<ApplicationUser>()
+                .HasOne(u => u.Employee)
+                .WithOne(e => e.User)
+                .HasForeignKey<Employee>(e => e.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
         }
 
         public DbSet<Employee> Employees => Set<Employee>();
@@ -48,5 +54,7 @@ namespace HR_Infrastructure.Context
         public DbSet<OfficialHoliday> OfficialHolidays => Set<OfficialHoliday>();
         public DbSet<Attendance> Attendances => Set<Attendance>();
         public DbSet<SalaryReport> SalaryReports => Set<SalaryReport>();
+
+        public DbSet<ApplicationUser> ApplicationUser => Set<ApplicationUser>();
     }
 }
