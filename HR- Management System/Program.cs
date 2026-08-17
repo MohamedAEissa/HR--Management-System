@@ -1,8 +1,10 @@
-using HR_Application;
-using HR_Infrastructure;
-using HR__Management_System.Extentions;
+using HR__Management_System.EndPoints.Auth;
 using HR__Management_System.EndPoints.DepartmentEndpoints;
 using HR__Management_System.EndPoints.Employees;
+using HR__Management_System.Extentions;
+using HR_Application;
+using HR_Infrastructure;
+using Microsoft.AspNetCore.Identity;
 
 
 
@@ -20,7 +22,7 @@ var app = builder.Build();
 
 
 app.UseApiMiddelwares();
-
+app.MapAuthEndpoint();
 app.MapDepartmentEndpoints();
 app.MapEmployeeEndpoints();
 

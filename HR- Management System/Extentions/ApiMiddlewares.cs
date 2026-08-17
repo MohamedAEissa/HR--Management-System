@@ -26,7 +26,7 @@ namespace HR__Management_System.Extentions
                     options.Theme = ScalarTheme.Purple;
                 });
             }
-
+           
             // Authentication & Authorization 
             app.UseAuthentication();
             app.UseAuthorization();

@@ -16,7 +16,7 @@ namespace HR_Application.Interfaces.Persistence
         DbSet<OfficialHoliday> OfficialHolidays { get; }
         DbSet<Attendance> Attendances { get; }
         DbSet<SalaryReport> SalaryReports { get; }
-
+        DbSet<ApplicationUser> ApplicationUser { get; }
         Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
     }
 }
