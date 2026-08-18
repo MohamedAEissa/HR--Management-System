@@ -13,7 +13,8 @@ namespace HR__Management_System.EndPoints.Employees
         {
 
             var group = app.MapGroup("api/employees")
-                           .WithTags("Employees");
+                           .WithTags("Employees")
+                           .RequireAuthorization(policy => policy.RequireRole("Admin", "HR")); ;
 
 
             group.MapGet("/", async (IMediator mediator, CancellationToken cancellationToken) =>

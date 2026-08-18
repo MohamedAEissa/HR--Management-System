@@ -11,7 +11,8 @@ namespace HR__Management_System.EndPoints.DepartmentEndpoints
         public static void MapDepartmentEndpoints(this IEndpointRouteBuilder app)
         {
             var group = app.MapGroup("/api/departments")
-                           .WithTags("Departments");
+                           .WithTags("Departments")
+                           .RequireAuthorization(policy => policy.RequireRole("Admin", "HR")); ;
 
 
             group.MapGet("/", async (IMediator mediator, CancellationToken cancellationToken) =>
