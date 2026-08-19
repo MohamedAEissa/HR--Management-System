@@ -12,7 +12,7 @@ namespace HR__Management_System.EndPoints.DepartmentEndpoints
         {
             var group = app.MapGroup("/api/departments")
                            .WithTags("Departments")
-                           .RequireAuthorization(policy => policy.RequireRole("Admin", "HR")); ;
+                           .RequireAuthorization(policy => policy.RequireRole("Admin", "HR")); 
 
 
             group.MapGet("/", async (IMediator mediator, CancellationToken cancellationToken) =>

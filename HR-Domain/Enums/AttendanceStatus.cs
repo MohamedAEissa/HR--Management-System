@@ -10,6 +10,7 @@ namespace HR_Domain.Enums
     {
         Present,       
         Absent,        
+        late,
         WeeklyOff,     
         OfficialHoliday 
     }
