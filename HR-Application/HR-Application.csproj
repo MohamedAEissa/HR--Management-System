@@ -24,6 +24,10 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <Folder Include="Features\Attendance\Mappings\" />
 	  <Folder Include="Features\Auth\Queries\" />
+	  <Folder Include="Features\GeneralSettings\Mappings\" />
+	  <Folder Include="Features\OfficialHoliday\Mappings\" />
+	  <Folder Include="Features\PayrollReport\Mappings\" />
 	</ItemGroup>
 </Project>
