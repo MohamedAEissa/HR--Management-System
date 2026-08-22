@@ -7,13 +7,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace HR_Application.Features.PayrollReport.Commands.CreatePayroll
+namespace HR_Application.Features.SalaryReports.Commands.CreateSalaryReport
 {
-    public class CreatePayrollCommandValidator : AbstractValidator<CreatePayrollCommand>
+    public class CreateSalaryReportCommandValidator : AbstractValidator<CreateSalaryReportCommand>
     {
         private readonly IApplicationDbContext _context;
 
-        public CreatePayrollCommandValidator(IApplicationDbContext context)
+        public CreateSalaryReportCommandValidator(IApplicationDbContext context)
         {
             _context = context;
 
@@ -30,16 +30,15 @@ namespace HR_Application.Features.PayrollReport.Commands.CreatePayroll
             RuleFor(x => x.Dto.Year)
                 .GreaterThanOrEqualTo(2000).WithMessage("Invalid year.");
 
-          
             RuleFor(x => x.Dto)
                 .MustAsync(async (dto, cancellation) =>
                 {
-                    var exists = await _context.SalaryReports.AnyAsync(p =>
-                        p.EmployeeId == dto.EmployeeId &&
-                        p.Month == dto.Month &&
-                        p.Year == dto.Year, cancellation);
+                    var exists = await _context.SalaryReports.AnyAsync(sr =>
+                        sr.EmployeeId == dto.EmployeeId &&
+                        sr.Month == dto.Month &&
+                        sr.Year == dto.Year, cancellation);
                     return !exists;
-                }).WithMessage("A payroll for this employee in this month and year already exists.");
+                }).WithMessage("A salary report for this employee in this month and year already exists.");
         }
     }
 }

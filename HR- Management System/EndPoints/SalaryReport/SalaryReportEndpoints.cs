@@ -1,9 +1,9 @@
-﻿using HR_Application.Features.PayrollReport.Commands.CreatePayroll;
-using HR_Application.Features.PayrollReport.Commands.DeleteSalaryReport;
-using HR_Application.Features.PayrollReport.DTOs;
-using HR_Application.Features.PayrollReport.Queries.GetSalaryReportById;
-using HR_Application.Features.PayrollReport.Queries.GetSalaryReports;
-using HR_Application.Features.Payrolls.Commands.CreatePayroll;
+﻿using HR_Application.Features.SalaryReports.Commands.CreateSalaryReport;
+using HR_Application.Features.SalaryReports.Commands.DeleteSalaryReport;
+using HR_Application.Features.SalaryReports.Commands.UpdateSalaryReport;
+using HR_Application.Features.SalaryReports.DTOs;
+using HR_Application.Features.SalaryReports.Queries.GetSalaryReportById;
+using HR_Application.Features.SalaryReports.Queries.GetSalaryReports;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
@@ -19,6 +19,7 @@ namespace HR_Management_System.Endpoints
                 .WithTags("Salary Reports Management")
                 .RequireAuthorization(policy => policy.RequireRole("Admin", "HR"));
 
+           
             group.MapGet("/", async (Guid? employeeId, int? month, int? year, ISender mediator) =>
             {
                 var query = new GetSalaryReportsQuery(employeeId, month, year);
@@ -35,10 +36,17 @@ namespace HR_Management_System.Endpoints
             });
 
            
-            group.MapPost("/", async (CreatePayrollDto dto, ISender mediator) =>
+            group.MapPost("/", async (RequestSalaryReportDto dto, ISender mediator) =>
             {
-                var id = await mediator.Send(new CreatePayrollCommand(dto));
-                return Results.Created($"/api/salary-reports/{id}", new { Id = id, Message = "Salary report generated successfully." });
+                var result = await mediator.Send(new CreateSalaryReportCommand(dto));
+                return Results.Created($"/api/salary-reports/{result.Id}", new { Data = result, Message = "Salary report generated successfully." });
+            });
+
+        
+            group.MapPut("/{id:guid}", async (Guid id, RequestSalaryReportDto dto, ISender mediator) =>
+            {
+                var result = await mediator.Send(new UpdateSalaryReportCommand(id, dto));
+                return Results.Ok(new { Data = result, Message = "Salary report updated successfully." });
             });
 
           

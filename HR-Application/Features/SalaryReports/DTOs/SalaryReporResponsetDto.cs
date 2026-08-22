@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace HR_Application.Features.PayrollReport.DTOs
+namespace HR_Application.Features.SalaryReports.DTOs
 {
-    public class SalaryReportDto
+     public class SalaryReporResponsetDto
     {
         public Guid Id { get; set; }
         public Guid EmployeeId { get; set; }

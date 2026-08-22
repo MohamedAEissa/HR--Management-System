@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace HR_Application.Features.PayrollReport.Commands.DeleteSalaryReport
+namespace HR_Application.Features.SalaryReports.Commands.DeleteSalaryReport
 {
     public class DeleteSalaryReportCommandHandler : IRequestHandler<DeleteSalaryReportCommand, bool>
     {
@@ -20,15 +20,15 @@ namespace HR_Application.Features.PayrollReport.Commands.DeleteSalaryReport
 
         public async Task<bool> Handle(DeleteSalaryReportCommand request, CancellationToken cancellationToken)
         {
-            var report = await _context.SalaryReports
+            var salaryReport = await _context.SalaryReports
                 .FirstOrDefaultAsync(s => s.Id == request.Id, cancellationToken);
 
-            if (report == null) return false;
+            if (salaryReport == null) return false;
 
-            _context.SalaryReports.Remove(report);
+            _context.SalaryReports.Remove(salaryReport);
             await _context.SaveChangesAsync(cancellationToken);
 
-            return true; ;
+            return true;
         }
     }
 }

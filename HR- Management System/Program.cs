@@ -6,8 +6,8 @@ using HR__Management_System.EndPoints.GeneralSettings;
 using HR__Management_System.EndPoints.OfficialHoliday;
 using HR__Management_System.Extentions;
 using HR_Application;
-using HR_Application.Features.SalaryReportEndpoint;
 using HR_Infrastructure;
+using HR_Management_System.Endpoints;
 using Microsoft.AspNetCore.Identity;
 
 
@@ -32,5 +32,5 @@ app.MapEmployeeEndpoints();
 app.MapGeneralSettingsEndpoint();
 app.MapOfficialHolidayEndpoint();
 app.MapAttendanceEndpoints();
-app.MapSalaryReportEndpoints(); 
+app.MapSalaryReportEndpoints();
 app.Run();
