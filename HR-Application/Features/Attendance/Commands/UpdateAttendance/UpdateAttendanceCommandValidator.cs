@@ -19,11 +19,7 @@ namespace HR_Application.Features.Attendance.Commands.UpdateAttendance
                 .Must(dateStr => DateTime.TryParse(dateStr, out _))
                 .WithMessage("Invalid date format. Please use YYYY-MM-DD.");
 
-            RuleFor(x => x.Dto.OvertimeHours)
-                .GreaterThanOrEqualTo(0).WithMessage("Overtime hours cannot be negative.");
-
-            RuleFor(x => x.Dto.DeductionHours)
-                .GreaterThanOrEqualTo(0).WithMessage("Deduction hours cannot be negative.");
+         
         }
     }
 }

@@ -28,6 +28,6 @@
 	  <Folder Include="Features\Auth\Queries\" />
 	  <Folder Include="Features\GeneralSettings\Mappings\" />
 	  <Folder Include="Features\OfficialHoliday\Mappings\" />
-	  <Folder Include="Features\PayrollReport\Mappings\" />
+	  <Folder Include="Features\SalaryReports\Mappings\" />
 	</ItemGroup>
 </Project>

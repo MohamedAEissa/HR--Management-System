@@ -12,8 +12,6 @@ namespace HR_Application.Features.Attendance.DTOs
         public string Date { get; set; } = string.Empty;
         public TimeSpan? CheckInTime { get; set; }
         public TimeSpan? CheckOutTime { get; set; }
-        public decimal OvertimeHours { get; set; }
-        public decimal DeductionHours { get; set; }
         public AttendanceStatus Status { get; set; }
         public string? Notes { get; set; }
     }
