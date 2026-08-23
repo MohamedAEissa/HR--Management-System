@@ -33,3 +33,4 @@ namespace HR_Domain.Enums
 //    "totalDeductionAmount": 56.25,
 //    "netSalary": 1453.12
 //  },
+

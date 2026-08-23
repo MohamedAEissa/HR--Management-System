@@ -31,27 +31,36 @@ namespace HR_Application.Features.SalaryReports.Commands.CreateSalaryReport
 
             if (employee == null) throw new Exception("Employee not found.");
 
+          // general settings
+            var settings = await _context.GeneralSettings.FirstOrDefaultAsync(cancellationToken);
+            decimal overtimeRateMultiplier = settings?.OvertimeHourRate > 0 ? settings.OvertimeHourRate : 1.5m;
+
+           
+            var officialHolidays = await _context.OfficialHolidays
+                .Where(h => h.Date.Month == dto.Month && h.Date.Year == dto.Year)
+                .Select(h => h.Date.Date)
+                .ToListAsync(cancellationToken);
+
             var attendances = await _context.Attendances
                 .Where(a => a.EmployeeId == dto.EmployeeId &&
                             a.Date.Month == dto.Month &&
                             a.Date.Year == dto.Year)
                 .ToListAsync(cancellationToken);
 
-            // الحضور والغياب
+            
             int attendanceDays = attendances.Count(a => a.Status == AttendanceStatus.Present || a.Status == AttendanceStatus.late);
-            int absenceDays = attendances.Count(a => a.Status == AttendanceStatus.Absent);
+            int absenceDays = attendances.Count(a => a.Status == AttendanceStatus.Absent && !officialHolidays.Contains(a.Date.Date));
 
-            // الساعات
+        
             decimal totalOvertimeHours = attendances.Sum(a => a.OvertimeHours);
             decimal totalDeductionHours = attendances.Sum(a => a.DeductionHours);
 
-            // المعدلات المالية
             decimal hourlyRate = employee.Salary > 0 ? (employee.Salary / 30m / 8m) : 0;
-            decimal dailyRate = employee.Salary > 0 ? (employee.Salary / 30m) : 0; 
+            decimal dailyRate = employee.Salary > 0 ? (employee.Salary / 30m) : 0;
 
-            decimal totalOvertimeAmount = totalOvertimeHours * hourlyRate * 1.5m;
+            decimal totalOvertimeAmount = totalOvertimeHours * hourlyRate * overtimeRateMultiplier;
 
-            // إجمالي الخصومات (خصم ساعات التأخير + خصم أيام الغياب كاملة)
+          
             decimal delayDeductionAmount = totalDeductionHours * hourlyRate;
             decimal absenceDeductionAmount = absenceDays * dailyRate;
             decimal totalDeductionAmount = delayDeductionAmount + absenceDeductionAmount;
@@ -69,7 +78,7 @@ namespace HR_Application.Features.SalaryReports.Commands.CreateSalaryReport
                 TotalOvertimeHours = totalOvertimeHours,
                 TotalDeductionHours = totalDeductionHours,
                 TotalOvertimeAmount = Math.Round(totalOvertimeAmount, 2),
-                TotalDeductionAmount = Math.Round(totalDeductionAmount, 2), // هتشمل التأخير والغياب مع بعض
+                TotalDeductionAmount = Math.Round(totalDeductionAmount, 2),
                 NetSalary = Math.Round(netSalary, 2)
             };
 

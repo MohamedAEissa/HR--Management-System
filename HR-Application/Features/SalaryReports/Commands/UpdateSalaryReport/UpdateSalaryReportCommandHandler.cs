@@ -35,6 +35,16 @@ namespace HR_Application.Features.SalaryReports.Commands.UpdateSalaryReport
 
             if (employee == null) throw new Exception("Employee not found.");
 
+          
+            var settings = await _context.GeneralSettings.FirstOrDefaultAsync(cancellationToken);
+            decimal overtimeRateMultiplier = settings?.OvertimeHourRate > 0 ? settings.OvertimeHourRate : 1.5m;
+
+            
+            var officialHolidays = await _context.OfficialHolidays
+                .Where(h => h.Date.Month == dto.Month && h.Date.Year == dto.Year)
+                .Select(h => h.Date.Date)
+                .ToListAsync(cancellationToken);
+
             var attendances = await _context.Attendances
                 .Where(a => a.EmployeeId == dto.EmployeeId &&
                             a.Date.Month == dto.Month &&
@@ -42,7 +52,7 @@ namespace HR_Application.Features.SalaryReports.Commands.UpdateSalaryReport
                 .ToListAsync(cancellationToken);
 
             int attendanceDays = attendances.Count(a => a.Status == AttendanceStatus.Present || a.Status == AttendanceStatus.late);
-            int absenceDays = attendances.Count(a => a.Status == AttendanceStatus.Absent);
+            int absenceDays = attendances.Count(a => a.Status == AttendanceStatus.Absent && !officialHolidays.Contains(a.Date.Date));
 
             decimal totalOvertimeHours = attendances.Sum(a => a.OvertimeHours);
             decimal totalDeductionHours = attendances.Sum(a => a.DeductionHours);
@@ -50,16 +60,16 @@ namespace HR_Application.Features.SalaryReports.Commands.UpdateSalaryReport
             decimal hourlyRate = employee.Salary > 0 ? (employee.Salary / 30m / 8m) : 0;
             decimal dailyRate = employee.Salary > 0 ? (employee.Salary / 30m) : 0;
 
-            decimal totalOvertimeAmount = totalOvertimeHours * hourlyRate * 1.5m;
+            decimal totalOvertimeAmount = totalOvertimeHours * hourlyRate * overtimeRateMultiplier;
 
-            // حساب الخصومات الجديدة (التأخير + الغياب)
+          
             decimal delayDeductionAmount = totalDeductionHours * hourlyRate;
             decimal absenceDeductionAmount = absenceDays * dailyRate;
             decimal totalDeductionAmount = delayDeductionAmount + absenceDeductionAmount;
 
             decimal netSalary = employee.Salary + totalOvertimeAmount - totalDeductionAmount;
 
-            // تحديث الحقول في الـ Report القديم
+            // تحديث الحقول في الـ Report
             salaryReport.EmployeeId = dto.EmployeeId;
             salaryReport.Month = dto.Month;
             salaryReport.Year = dto.Year;

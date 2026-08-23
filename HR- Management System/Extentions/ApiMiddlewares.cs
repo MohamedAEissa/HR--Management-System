@@ -22,7 +22,7 @@ namespace HR__Management_System.Extentions
                 app.MapOpenApi();
                 app.MapScalarApiReference(options =>
                 {
-                    options.Title = "EventHub API";
+                    options.Title = "HRMS";
                     options.Theme = ScalarTheme.Purple;
                 });
             }

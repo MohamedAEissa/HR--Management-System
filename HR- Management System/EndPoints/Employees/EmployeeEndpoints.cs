@@ -60,7 +60,7 @@ namespace HR__Management_System.EndPoints.Employees
             {
 
                 await mediator.Send(new DeleteEmployeeCommand(id), cancellationToken);
-                return Results.Ok(new { message = "Department deleted successfully." });
+                return Results.Ok(new { message = "Employee deleted successfully." });
             })
             .Produces(StatusCodes.Status204NoContent)
             .Produces(StatusCodes.Status404NotFound);
