@@ -10,7 +10,7 @@ namespace HR_Application.Features.Attendance.DTOs
     public class AttendanceDto
     {
         public Guid Id { get; set; }
-        public Guid EmployeeId { get; set; }
+        public Guid EmployeeId { get; set; }    
         public string EmployeeName { get; set; } = string.Empty;
         public string DepartmentName { get; set; } = string.Empty;
         public DateTime Date { get; set; }

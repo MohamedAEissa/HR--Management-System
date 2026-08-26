@@ -59,9 +59,8 @@ namespace HR_Application.Features.SalaryReports.Commands.CreateSalaryReport
             decimal dailyRate = employee.Salary > 0 ? (employee.Salary / 30m) : 0;
 
             decimal totalOvertimeAmount = totalOvertimeHours * hourlyRate * overtimeRateMultiplier;
-
-          
             decimal delayDeductionAmount = totalDeductionHours * hourlyRate;
+            
             decimal absenceDeductionAmount = absenceDays * dailyRate;
             decimal totalDeductionAmount = delayDeductionAmount + absenceDeductionAmount;
 

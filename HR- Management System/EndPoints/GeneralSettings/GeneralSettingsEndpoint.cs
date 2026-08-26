@@ -18,7 +18,11 @@ namespace HR__Management_System.EndPoints.GeneralSettings
             settingsGroup.MapGet("/", async (ISender mediator) =>
             {
                 var result = await mediator.Send(new GetGeneralSettingsQuery());
-                return Results.Ok(result);
+                return Results.Ok(new
+                {
+                    Success = true,
+                    Data = result
+                });
             });
 
             

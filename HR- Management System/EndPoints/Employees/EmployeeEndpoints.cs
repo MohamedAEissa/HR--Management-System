@@ -21,7 +21,11 @@ namespace HR__Management_System.EndPoints.Employees
             {
                 var query = new GetAllEmployeesQuery();
                 var result = await mediator.Send(query, cancellationToken);
-                return Results.Ok(result);
+                return Results.Ok(new
+                {
+                    Success = true,
+                    Data = result
+                });
             })
              .Produces<List<EmployeeResponseDto>>(StatusCodes.Status200OK);
 
@@ -30,7 +34,11 @@ namespace HR__Management_System.EndPoints.Employees
             {
 
                 var result = await mediator.Send(new GetEmployeeByIdQuery(id), cancellationToken);
-                return Results.Ok(result);
+                return Results.Ok(new
+                {
+                    Success = true,
+                    Data = result
+                });
             })
             .Produces<EmployeeResponseDto>(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status404NotFound);
@@ -40,7 +48,11 @@ namespace HR__Management_System.EndPoints.Employees
             {
 
                 var result = await mediator.Send(new CreateEmployeeCommand(dto), cancellationToken);
-                return Results.Ok(result);
+                return Results.Ok(new
+                {
+                    Success = true,
+                    Data = result
+                });
             })
             .Produces<EmployeeResponseDto>(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status400BadRequest);
@@ -49,7 +61,11 @@ namespace HR__Management_System.EndPoints.Employees
             group.MapPut("/{id:guid}", async (Guid id, UpdateEmployeeDto dto, IMediator mediator, CancellationToken cancellationToken) =>
             {
                 var result = await mediator.Send(new UpdateEmployeeCommand(id, dto), cancellationToken);
-                return Results.Ok(result);
+                return Results.Ok(new
+                {
+                    Success = true,
+                    Data = result
+                });
             })
             .Produces<EmployeeResponseDto>(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status400BadRequest)
@@ -60,7 +76,7 @@ namespace HR__Management_System.EndPoints.Employees
             {
 
                 await mediator.Send(new DeleteEmployeeCommand(id), cancellationToken);
-                return Results.Ok(new { message = "Employee deleted successfully." });
+                return Results.Ok(new { message = "Employee deleted successfully." , Success = true });
             })
             .Produces(StatusCodes.Status204NoContent)
             .Produces(StatusCodes.Status404NotFound);

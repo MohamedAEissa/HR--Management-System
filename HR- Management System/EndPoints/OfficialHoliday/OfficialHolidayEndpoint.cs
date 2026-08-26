@@ -18,21 +18,25 @@ namespace HR__Management_System.EndPoints.OfficialHoliday
             group.MapGet("/", async (ISender mediator) =>
             {
                 var result = await mediator.Send(new GetOfficialHolidaysQuery());
-                return Results.Ok(result);
+                return Results.Ok(new
+                {
+                    Success = true,
+                    Data = result
+                });
             });
 
           
             group.MapPost("/", async (CreateOfficialHolidayDto dto, ISender mediator) =>
             {
                 var holidayId = await mediator.Send(new CreateOfficialHolidayCommand(dto));
-                return Results.Created($"/api/official-holidays/{holidayId}", new { Id = holidayId, Message = "Holiday created successfully." });
+                return Results.Created($"/api/official-holidays/{holidayId}", new { Id = holidayId, Message = "Holiday created successfully.", Success = true });
             });
 
             
             group.MapGroup("api/official-holidays").MapDelete("/{id:guid}", async (Guid id, ISender mediator) =>
             {
                 var result = await mediator.Send(new DeleteOfficialHolidayCommand(id));
-                return result ? Results.Ok(new { Message = "Holiday deleted successfully." }) : Results.NotFound();
+                return result ? Results.Ok(new { Message = "Holiday deleted successfully.", Success = true }) : Results.NotFound();
             });
         }
     }

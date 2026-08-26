@@ -18,7 +18,11 @@ namespace HR__Management_System.EndPoints.DepartmentEndpoints
             group.MapGet("/", async (IMediator mediator, CancellationToken cancellationToken) =>
             {
                 var result = await mediator.Send(new GetAllDepartmentsQuery(), cancellationToken);
-                return Results.Ok(result);
+                return Results.Ok(new
+                {
+                    Success = true,
+                    Data = result
+                });
             })
             .Produces<IEnumerable<DepartmentResponseDto>>(StatusCodes.Status200OK);
 
@@ -26,7 +30,11 @@ namespace HR__Management_System.EndPoints.DepartmentEndpoints
             group.MapGet("/{id:guid}", async (Guid id, IMediator mediator, CancellationToken cancellationToken) =>
             {
                 var result = await mediator.Send(new GetDepartmentByIdQuery(id), cancellationToken);
-                return Results.Ok(result);
+                return Results.Ok(new
+                {
+                    Success = true,
+                    Data = result
+                });
             })
             .Produces<DepartmentResponseDto>(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status404NotFound);
@@ -35,7 +43,11 @@ namespace HR__Management_System.EndPoints.DepartmentEndpoints
             group.MapPost("/", async (CreateDepartmentDto dto, IMediator mediator, CancellationToken cancellationToken) =>
             {
                 var result = await mediator.Send(new CreateDepartmentCommand(dto), cancellationToken);
-                return Results.Ok(result);
+                return Results.Ok(new
+                {
+                    Success = true,
+                    Data = result
+                });
             })
             .Produces<DepartmentResponseDto>(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status400BadRequest);
@@ -44,7 +56,11 @@ namespace HR__Management_System.EndPoints.DepartmentEndpoints
             group.MapPut("/{id:guid}", async (Guid id, UpdateDepartmentDto dto, IMediator mediator, CancellationToken cancellationToken) =>
             {
                 var result = await mediator.Send(new UpdateDepartmentCommand(id, dto), cancellationToken);
-                return Results.Ok(result);
+                return Results.Ok(new
+                {
+                    Success = true,
+                    Data = result
+                });
             })
             .Produces<DepartmentResponseDto>(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status404NotFound)
@@ -54,7 +70,9 @@ namespace HR__Management_System.EndPoints.DepartmentEndpoints
             group.MapDelete("/{id:guid}", async (Guid id, IMediator mediator, CancellationToken cancellationToken) =>
             {
                 await mediator.Send(new DeleteDepartmentCommand(id), cancellationToken);
-                return Results.Ok(new { message = "Department deleted successfully." });
+                return Results.Ok(new { message = "Department deleted successfully.",
+                    Success = true,
+                });
             })
             .Produces(StatusCodes.Status200OK) 
              .Produces(StatusCodes.Status404NotFound);

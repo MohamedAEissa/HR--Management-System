@@ -24,7 +24,11 @@ namespace HR_Management_System.Endpoints
             {
                 var query = new GetSalaryReportsQuery(employeeId, month, year);
                 var result = await mediator.Send(query);
-                return Results.Ok(result);
+                return Results.Ok(new
+                {
+                    Success = true,
+                    Data = result
+                });
             });
 
             
@@ -32,28 +36,32 @@ namespace HR_Management_System.Endpoints
             {
                 var query = new GetSalaryReportByIdQuery(id);
                 var result = await mediator.Send(query);
-                return result != null ? Results.Ok(result) : Results.NotFound();
+                return result != null ? Results.Ok(new
+                {
+                    Success = true,
+                    Data = result
+                }) : Results.NotFound();
             });
 
            
             group.MapPost("/", async (RequestSalaryReportDto dto, ISender mediator) =>
             {
                 var result = await mediator.Send(new CreateSalaryReportCommand(dto));
-                return Results.Created($"/api/salary-reports/{result.Id}", new { Data = result, Message = "Salary report generated successfully." });
+                return Results.Created($"/api/salary-reports/{result.Id}", new { Data = result, Message = "Salary report generated successfully." , Success = true });
             });
 
         
             group.MapPut("/{id:guid}", async (Guid id, RequestSalaryReportDto dto, ISender mediator) =>
             {
                 var result = await mediator.Send(new UpdateSalaryReportCommand(id, dto));
-                return Results.Ok(new { Data = result, Message = "Salary report updated successfully." });
+                return Results.Ok(new { Data = result, Message = "Salary report updated successfully.", Success = true });
             });
 
           
             group.MapDelete("/{id:guid}", async (Guid id, ISender mediator) =>
             {
                 var result = await mediator.Send(new DeleteSalaryReportCommand(id));
-                return result ? Results.Ok(new { Message = "Salary report deleted successfully." }) : Results.NotFound();
+                return result ? Results.Ok(new { Message = "Salary report deleted successfully." , Success = true }) : Results.NotFound();
             });
         }
     }

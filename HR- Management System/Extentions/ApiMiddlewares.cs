@@ -13,6 +13,8 @@ namespace HR__Management_System.Extentions
             // HTTPS Redirection
             app.UseHttpsRedirection();
 
+            app.UseCors("AllowAngularApp");
+
             // Routing 
             app.UseRouting();
 
