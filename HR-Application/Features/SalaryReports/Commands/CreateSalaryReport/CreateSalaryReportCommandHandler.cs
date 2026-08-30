@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace HR_Application.Features.SalaryReports.Commands.CreateSalaryReport
@@ -31,16 +31,25 @@ namespace HR_Application.Features.SalaryReports.Commands.CreateSalaryReport
 
             if (employee == null) throw new Exception("Employee not found.");
 
-          // general settings
+         
             var settings = await _context.GeneralSettings.FirstOrDefaultAsync(cancellationToken);
-            decimal overtimeRateMultiplier = settings?.OvertimeHourRate > 0 ? settings.OvertimeHourRate : 1.5m;
+            decimal overtimeMultiplier = settings?.OvertimeHourRate > 0 ? settings.OvertimeHourRate : 1.5m;
+            decimal deductionMultiplier = settings?.DeductionHourRate > 0 ? settings.DeductionHourRate : 1.0m;
 
-           
+         
+            var weeklyDaysOff = (settings?.WeeklyDaysOff ?? $"{DayOfWeek.Friday},{DayOfWeek.Saturday}")
+                .Split(',', StringSplitOptions.RemoveEmptyEntries)
+                .Select(d => Enum.TryParse<DayOfWeek>(d.Trim(), true, out var day) ? day : (DayOfWeek?)null)
+                .Where(d => d.HasValue)
+                .Select(d => d!.Value)
+                .ToList();
+
             var officialHolidays = await _context.OfficialHolidays
                 .Where(h => h.Date.Month == dto.Month && h.Date.Year == dto.Year)
                 .Select(h => h.Date.Date)
                 .ToListAsync(cancellationToken);
 
+          
             var attendances = await _context.Attendances
                 .Where(a => a.EmployeeId == dto.EmployeeId &&
                             a.Date.Month == dto.Month &&
@@ -49,23 +58,25 @@ namespace HR_Application.Features.SalaryReports.Commands.CreateSalaryReport
 
             
             int attendanceDays = attendances.Count(a => a.Status == AttendanceStatus.Present || a.Status == AttendanceStatus.late);
-            int absenceDays = attendances.Count(a => a.Status == AttendanceStatus.Absent && !officialHolidays.Contains(a.Date.Date));
 
-        
+            int absenceDays = attendances.Count(a => a.Status == AttendanceStatus.Absent &&
+                                                    !officialHolidays.Contains(a.Date.Date) &&
+                                                    !weeklyDaysOff.Contains(a.Date.DayOfWeek));
+
             decimal totalOvertimeHours = attendances.Sum(a => a.OvertimeHours);
             decimal totalDeductionHours = attendances.Sum(a => a.DeductionHours);
 
             decimal hourlyRate = employee.Salary > 0 ? (employee.Salary / 30m / 8m) : 0;
             decimal dailyRate = employee.Salary > 0 ? (employee.Salary / 30m) : 0;
 
-            decimal totalOvertimeAmount = totalOvertimeHours * hourlyRate * overtimeRateMultiplier;
-            decimal delayDeductionAmount = totalDeductionHours * hourlyRate;
-            
+            decimal totalOvertimeAmount = totalOvertimeHours * hourlyRate * overtimeMultiplier;
+            decimal delayDeductionAmount = totalDeductionHours * hourlyRate * deductionMultiplier;
             decimal absenceDeductionAmount = absenceDays * dailyRate;
             decimal totalDeductionAmount = delayDeductionAmount + absenceDeductionAmount;
 
             decimal netSalary = employee.Salary + totalOvertimeAmount - totalDeductionAmount;
 
+            // 5. Save Report
             var salaryReport = new SalaryReport
             {
                 EmployeeId = dto.EmployeeId,
